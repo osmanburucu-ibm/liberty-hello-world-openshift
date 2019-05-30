@@ -12,14 +12,12 @@ openshift.withCluster() {
 }
 
 pipeline {
-    agent any
+    agent {
+      label 'maven'
+    }
 
     stages {
         stage('Maven build') {
-          agent {
-            label 'maven'
-          }
-
           steps {
             sh 'mvn -v'
             sh 'mvn clean package'
@@ -28,10 +26,6 @@ pipeline {
 
         // Run Maven unit tests
         stage('Unit Test'){
-          agent {
-            label 'maven'
-          }
-
           steps {
             sh "mvn -B test -f ${POM_FILE}"
           }
