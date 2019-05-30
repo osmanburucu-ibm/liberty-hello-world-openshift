@@ -28,6 +28,10 @@ pipeline {
 
         // Run Maven unit tests
         stage('Unit Test'){
+          agent {
+            label 'maven'
+          }
+
           steps {
             sh "mvn -B test -f ${POM_FILE}"
           }
