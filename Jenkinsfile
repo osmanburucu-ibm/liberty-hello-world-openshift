@@ -128,9 +128,9 @@ pipeline {
           }
         }
         stage ('Scan Container Image') {
+        /*
           steps {  
             script {
-              /*
               def image_digest_arr = IMAGE_DIGEST.split(":")
               def registry = "${env.AQUA_REGISTRY}"
 
@@ -154,9 +154,9 @@ pipeline {
                 println "WARNING aqua scan failed! ${err}"
                 currentBuild.result = 'UNSTABLE'
               }
-              */
             }
           }
+              */
         }
 
         stage ('Push Container Image') {

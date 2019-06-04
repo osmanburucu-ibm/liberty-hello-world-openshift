@@ -17,7 +17,7 @@ objects:
     - name: http-unsec
       port: 9080
       protocol: TCP
-      targetPort: 8080
+      targetPort: 9080
     selector:
       name: ${APP_NAME}
 parameters:
