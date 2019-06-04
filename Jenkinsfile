@@ -277,6 +277,8 @@ pipeline {
                 keyFileVariable: 'SSH_KEY')]) {
                 sh """
                 cp ../ocp_deploy_assets/* .
+                git config user.email "jenkins@jenkins.com"
+                git config user.name "jenkins"
                 git add .
                 git commit -m "jenkins commit ${env.BUILD_NUMBER}"
                 git push origin master 
