@@ -271,10 +271,9 @@ pipeline {
 
             sh "find ."
 
-            def repoDir = "liberty-hello-world-openshift-deploy"
             withCredentials([sshUserPrivateKey(credentialsId: scm.credentialsId, keyFileVariable: 'SSH_KEY')]) {
               sh """
-              cp ocp_deploy_assets/* ${repoDir}
+              cp ocp_deploy_assets/* liberty-hello-world-openshift-deploy
               git add .
               git commit -m "jenkins commit ${env.BUILD_NUMBER}"
               git push origin master 
