@@ -285,7 +285,7 @@ pipeline {
 
                 writeFile file: "local_ssh.sh",
                      text: """
-                     ssh -i ${SSH_KEY} -l git -o StrictHostKeyChecking=no "$@"
+                     ssh -i ${env.SSH_KEY} -l git -o StrictHostKeyChecking=no "\$@"
                      """
 
                 sh 'chmod +x local_ssh.sh'
