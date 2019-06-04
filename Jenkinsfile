@@ -8,6 +8,7 @@ openshift.withCluster() {
   env.APP_NAME = "${JOB_NAME}".replaceAll(/-build.*/, '')
   echo "Starting Pipeline for ${APP_NAME}..."
   env.BUILD = "${env.NAMESPACE}"
+  env.DEPLOY_REPO = "git@github.com:jkwong888/liberty-hello-world-openshift-deploy.git"
 }
 
 pipeline {
@@ -221,10 +222,6 @@ pipeline {
                   files = findFiles(glob: 'openshift/templates/*.*')
 
                   for (File f : files) {
-                    /*
-                     * Note: current version of RBC OCP doesn't support `oc process --ignore-unknown-parameters=true`, 
-                     * (need version >= 3.7, oc/ocp cli and jenkins plugin?) so we need to have all -p parameters defined in all templates here.
-                     */
                     def objects = openshift.process(
                       "-f", "${f.path}", 
                       "-p", "APP_NAME=${env.APP_NAME}",
@@ -261,6 +258,29 @@ pipeline {
              * 3. Check in to git: Do a git wizardry -> config, pull latest, commit, push
              **/
              
+          }
+        }
+
+
+        stage ('Push deployment artifacts') {
+          steps {
+            git url: "${env.DEPLOY_REPO}",
+                branch: "master",
+                credentialsId: scm.credentialsId
+
+
+            sh "find ."
+
+            def repoDir = "liberty-hello-world-openshift-deploy"
+            withCredentials([sshUserPrivateKey(credentialsId: scm.credentialsId, keyFileVariable: 'SSH_KEY')]) {
+              sh """
+              cp ocp_deploy_assets/* ${repoDir}
+              git add .
+              git commit -m "jenkins commit ${env.BUILD_NUMBER}"
+              git push origin master 
+              """
+            }
+            
           }
         }
 
