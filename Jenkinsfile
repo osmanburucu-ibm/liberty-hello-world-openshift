@@ -283,7 +283,11 @@ pipeline {
                 git commit -m "jenkins commit ${env.BUILD_NUMBER}"
                 """
 
-                sh 'echo ssh -i $SSH_KEY -l git -o StrictHostKeyChecking=no \\"\\$@\\" > local_ssh.sh'
+                writeFile file: "local_ssh.sh",
+                     text: """
+                     ssh -i ${SSH_KEY} -l git -o StrictHostKeyChecking=no "$@"
+                     """
+
                 sh 'chmod +x local_ssh.sh'
                 withEnv(['GIT_SSH=local_ssh.sh']) {
                     sh 'git push origin master'
