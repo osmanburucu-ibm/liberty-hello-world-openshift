@@ -128,9 +128,10 @@ pipeline {
           }
         }
         stage ('Scan Container Image') {
-        /*
           steps {  
             script {
+              println "scan container image"
+        /*
               def image_digest_arr = IMAGE_DIGEST.split(":")
               def registry = "${env.AQUA_REGISTRY}"
 
@@ -154,9 +155,9 @@ pipeline {
                 println "WARNING aqua scan failed! ${err}"
                 currentBuild.result = 'UNSTABLE'
               }
+              */
             }
           }
-              */
         }
 
         stage ('Push Container Image') {
@@ -164,9 +165,12 @@ pipeline {
             agent {
                 label "skopeo"
             }
+            */
             steps {  
                 script {                    
+                  println "push container image"
 
+/*
                     def srcImage = OUTPUT_IMAGE
 
                     println("Image is now being pushed to https://${env.DST_IMAGE}")
@@ -192,9 +196,9 @@ pipeline {
                             }
                         }
                     }
+            */
                 }
             }
-            */
         }
 
         stage ('Generate OCP deployment artifacts') {
