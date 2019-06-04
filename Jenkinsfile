@@ -289,7 +289,7 @@ pipeline {
                      """
 
                 sh 'chmod +x local_ssh.sh'
-                withEnv(['GIT_SSH=local_ssh.sh']) {
+                withEnv(['GIT_SSH=./local_ssh.sh']) {
                     sh 'git push origin master'
                 }
               }
