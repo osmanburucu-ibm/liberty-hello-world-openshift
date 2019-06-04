@@ -264,21 +264,24 @@ pipeline {
 
         stage ('Push deployment artifacts') {
           steps {
-            git url: "${env.DEPLOY_REPO}",
-                branch: "master",
-                credentialsId: scm.getUserRemoteConfigs()[0].getCredentialsId()
+            sh "mkdir -p deploy"
 
+            dir ('deploy') {
+              git url: "${env.DEPLOY_REPO}",
+                  branch: "master",
+                  credentialsId: scm.getUserRemoteConfigs()[0].getCredentialsId()
 
-            sh "find ."
+              sh "find ."
 
-            withCredentials([sshUserPrivateKey(credentialsId: scm.getUserRemoteConfigs()[0].getCredentialsId(), 
-              keyFileVariable: 'SSH_KEY')]) {
-              sh """
-              cp ocp_deploy_assets/* liberty-hello-world-openshift-deploy
-              git add .
-              git commit -m "jenkins commit ${env.BUILD_NUMBER}"
-              git push origin master 
-              """
+              withCredentials([sshUserPrivateKey(credentialsId: scm.getUserRemoteConfigs()[0].getCredentialsId(), 
+                keyFileVariable: 'SSH_KEY')]) {
+                sh """
+                cp ../ocp_deploy_assets/* .
+                git add .
+                git commit -m "jenkins commit ${env.BUILD_NUMBER}"
+                git push origin master 
+                """
+              }
             }
             
           }
