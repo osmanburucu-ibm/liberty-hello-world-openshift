@@ -266,12 +266,13 @@ pipeline {
           steps {
             git url: "${env.DEPLOY_REPO}",
                 branch: "master",
-                credentialsId: scm.credentialsId
+                credentialsId: scm.getUserRemoteConfigs()[0].getCredentialsId()
 
 
             sh "find ."
 
-            withCredentials([sshUserPrivateKey(credentialsId: scm.credentialsId, keyFileVariable: 'SSH_KEY')]) {
+            withCredentials([sshUserPrivateKey(credentialsId: scm.getUserRemoteConfigs()[0].getCredentialsId(), 
+              keyFileVariable: 'SSH_KEY')]) {
               sh """
               cp ocp_deploy_assets/* liberty-hello-world-openshift-deploy
               git add .
