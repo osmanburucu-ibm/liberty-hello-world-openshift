@@ -20,7 +20,18 @@ openshift.withCluster() {
 
 pipeline {
     agent {
-      label 'maven'
+      kubernetes {
+        label 'maven'
+        yaml """
+apiVersion: v1
+kind: Pod
+spec:
+  containers:
+  - name: jnlp
+    image: registry.redhat.io/openshift3/jenkins-agent-maven-35-rhel7:v3.11
+  serviceAccountName: jenkins
+"""
+      }
     }
 
     stages {
@@ -169,40 +180,47 @@ pipeline {
         }
 
         stage ('Push Container Image') {
-            agent {
-                label "skopeo"
+          agent {
+            kubernetes {
+              label 'skopeo'
+              yaml """
+apiVersion: v1
+kind: Pod
+spec:
+  containers:
+  - name: jnlp
+    image: jkwong/skopeo-jenkins 
+  serviceAccountName: jenkins
+"""
             }
+          }
 
-            steps {  
-                script {                    
+          steps {  
+              script {                    
+                  def srcImage = OUTPUT_IMAGE
 
-                    def srcImage = OUTPUT_IMAGE
+                  openshift.withCluster() {
+                      openshift.withProject() {
+                        def openshift_token = readFile "/var/run/secrets/kubernetes.io/serviceaccount/token"
 
-                    println("Image is now being pushed to https://${env.DST_IMAGE}")
+                        println "source image: ${srcImage}, dest image: ${env.DST_IMAGE}"
 
-                    openshift.withCluster() {
-                        openshift.withProject() {
-                          def openshift_token = readFile "/var/run/secrets/kubernetes.io/serviceaccount/token"
-
-                          println "source image: ${srcImage}, dest image: ${env.DST_IMAGE}"
-
-                          withCredentials([usernamePassword(credentialsId: "${env.EXTERNAL_IMAGE_REPO_CREDENTIALS}", passwordVariable: 'AFpasswd', usernameVariable: 'AFuser')]) {
-
-                                sh """
-                                skopeo copy \
-                                --src-creds openshift:${openshift_token} \
-                                --src-tls-verify=false \
-                                --dest-creds ${AFuser}:${AFpasswd} \
-                                --dest-tls-verify=false \
-                                docker://${srcImage} \
-                                docker://${env.DST_IMAGE}
-                                """
-                                println("Image is successfully pushed to https://${env.DST_IMAGE}")
-                            }
-                        }
-                    }
-                }
-            }
+                        withCredentials([usernamePassword(credentialsId: "${env.EXTERNAL_IMAGE_REPO_CREDENTIALS}", passwordVariable: 'AFpasswd', usernameVariable: 'AFuser')]) {
+                              sh """
+                              skopeo copy \
+                              --src-creds openshift:${openshift_token} \
+                              --src-tls-verify=false \
+                              --dest-creds ${AFuser}:${AFpasswd} \
+                              --dest-tls-verify=false \
+                              docker://${srcImage} \
+                              docker://${env.DST_IMAGE}
+                              """
+                              println("Image is successfully pushed to https://${env.DST_IMAGE}")
+                          }
+                      }
+                  }
+              }
+          }
         }
 
         stage ('Generate OCP deployment artifacts') {
