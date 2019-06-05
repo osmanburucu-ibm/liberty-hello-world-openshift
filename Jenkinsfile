@@ -31,6 +31,10 @@ spec:
   - name: jnlp
     image: openshift/jenkins-agent-maven-35-centos7:v3.11
     tty: true
+    command: 
+    - /usr/bin/dumb-init
+    - --
+    - /usr/local/bin/run-jnlp-client
   serviceAccountName: jenkins
 """
       }
