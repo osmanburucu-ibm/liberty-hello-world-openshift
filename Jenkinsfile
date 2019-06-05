@@ -22,6 +22,7 @@ pipeline {
     agent {
       kubernetes {
         cloud 'openshift'
+        label 'mvn35'
         yaml """
 apiVersion: v1
 kind: Pod
@@ -183,6 +184,7 @@ spec:
           agent {
             kubernetes {
               cloud 'openshift'
+              label 'skopeo-jenkins'
               yaml """
 apiVersion: v1
 kind: Pod
