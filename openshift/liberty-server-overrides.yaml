@@ -1,0 +1,12 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: liberty-overrides
+  labels:
+    app: hello-world
+data:
+  override-server.xml: |-
+    <server>
+        <jndiEntry jndiName="key1" value="key1" />
+        <jndiEntry jndiName="key2" value="key2" />
+    </server>

@@ -90,6 +90,10 @@ objects:
             volumeMounts:
             - name: cache-volume
               mountPath: /opt/ibm/wlp/output
+            - name: liberty-overrides
+              mountPath: /config/configDropins/overrides/override-server.xml
+              subPath: override-server.xml
+              readOnly: true
         dnsPolicy: ClusterFirst
         restartPolicy: Always
         schedulerName: default-scheduler
@@ -103,6 +107,9 @@ objects:
         volumes:
         - emptyDir: {}
           name: cache-volume
+        - name: liberty-overrides
+          configMap:
+            name: liberty-overrides
     test: false
     triggers:
     - type: ConfigChange
