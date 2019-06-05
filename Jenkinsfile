@@ -20,20 +20,7 @@ openshift.withCluster() {
 
 pipeline {
     agent {
-      kubernetes {
-        cloud 'openshift'
-        label 'maven'
-        yaml """
-apiVersion: v1
-kind: Pod
-spec:
-  containers:
-  - name: jnlp
-    image: registry.redhat.io/openshift3/jenkins-agent-maven-35-rhel7:v3.11
-    tty: true
-  serviceAccountName: jenkins
-"""
-      }
+      label 'maven'
     }
 
     stages {
