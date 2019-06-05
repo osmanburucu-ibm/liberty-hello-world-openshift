@@ -29,7 +29,7 @@ kind: Pod
 spec:
   containers:
   - name: jnlp
-    image: registry.redhat.io/openshift3/jenkins-agent-maven-35-rhel7:v3.11
+    image: openshift/jenkins-agent-maven-35-centos7:v3.11
     tty: true
   serviceAccountName: jenkins
 """
@@ -210,7 +210,6 @@ spec:
 
                         withCredentials([usernamePassword(credentialsId: "${env.EXTERNAL_IMAGE_REPO_CREDENTIALS}", passwordVariable: 'AFpasswd', usernameVariable: 'AFuser')]) {
                               sh """
-                              which skopeo
                               /usr/bin/skopeo copy \
                               --src-creds openshift:${openshift_token} \
                               --src-tls-verify=false \
