@@ -8,7 +8,14 @@ openshift.withCluster() {
   env.APP_NAME = "${JOB_NAME}".replaceAll(/-build.*/, '')
   echo "Starting Pipeline for ${APP_NAME}..."
   env.BUILD = "${env.NAMESPACE}"
-  env.DEPLOY_REPO = "git@github.com:jkwong888/liberty-hello-world-openshift-deploy.git"
+  env.DEPLOY_REPO_URL = "git@github.com:jkwong888/liberty-hello-world-openshift-deploy.git"
+  env.DEPLOY_REPO_BRANCH = "master"
+  env.DEPLOY_REPO_CREDS = "github-deploy-key"
+
+  env.EXTERNAL_IMAGE_REPO_URL = "harbor.jkwong.cloudns.cx"
+  env.EXTERNAL_IMAGE_REPO_NAMESPACE = "jkwong-pub"
+  env.EXTERNAL_IMAGE_REPO_CREDENTIALS = "harbor"
+  env.DST_IMAGE = "${env.EXTERNAL_IMAGE_REPO_URL}/${env.EXTERNAL_IMAGE_REPO_NAMESPACE}/${env.APP_NAME}:${env.BUILD_NUMBER}"
 }
 
 pipeline {
@@ -117,7 +124,7 @@ pipeline {
                     def imageDigest = buildObj.status.output.to.imageDigest
                     def imgRepoIdx = tmpImg.lastIndexOf(":")
                     println imgRepoIdx
-                    //StringBuilder builder = new StringBuilder()
+
                     OUTPUT_IMAGE = tmpImg.substring(0, imgRepoIdx) + "@" + imageDigest
 
                     println OUTPUT_IMAGE
@@ -162,16 +169,13 @@ pipeline {
         }
 
         stage ('Push Container Image') {
-          /*
             agent {
                 label "skopeo"
             }
-            */
+
             steps {  
                 script {                    
-                  println "push container image"
 
-/*
                     def srcImage = OUTPUT_IMAGE
 
                     println("Image is now being pushed to https://${env.DST_IMAGE}")
@@ -182,7 +186,7 @@ pipeline {
 
                           println "source image: ${srcImage}, dest image: ${env.DST_IMAGE}"
 
-                          withCredentials([usernamePassword(credentialsId: "${env.ARTIFACTORY_CREDENTIALS}", passwordVariable: 'AFpasswd', usernameVariable: 'AFuser')]) {
+                          withCredentials([usernamePassword(credentialsId: "${env.EXTERNAL_IMAGE_REPO_CREDENTIALS}", passwordVariable: 'AFpasswd', usernameVariable: 'AFuser')]) {
 
                                 sh """
                                 skopeo copy \
@@ -197,7 +201,6 @@ pipeline {
                             }
                         }
                     }
-            */
                 }
             }
         }
@@ -267,14 +270,14 @@ pipeline {
             sh "mkdir -p deploy"
 
             dir ('deploy') {
-              git url: "${env.DEPLOY_REPO}",
-                  branch: "master",
-                  credentialsId: scm.getUserRemoteConfigs()[0].getCredentialsId()
+              git url: "${env.DEPLOY_REPO_URL}",
+                  branch: "${env.DEPLOY_REPO_BRANCH}",
+                  credentialsId: "${env.DEPLOY_REPO_CREDS}"
 
               sh "find ."
 
-              withCredentials([sshUserPrivateKey(credentialsId: scm.getUserRemoteConfigs()[0].getCredentialsId(), 
-                keyFileVariable: 'SSH_KEY')]) {
+              withCredentials([sshUserPrivateKey(credentialsId: "${env.DEPLOY_REPO_CREDS}", 
+                                                 keyFileVariable: 'SSH_KEY')]) {
                 sh """
                 cp ../ocp_deploy_assets/* .
                 git config user.email "jenkins@jenkins.com"
@@ -290,13 +293,11 @@ pipeline {
 
                 sh 'chmod +x local_ssh.sh'
                 withEnv(['GIT_SSH=./local_ssh.sh']) {
-                    sh 'git push origin master'
+                    sh "git push origin ${env.DEPLOY_REPO_BRANCH}"
                 }
               }
             }
-            
           }
         }
-
     }
 }
