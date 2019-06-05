@@ -39,15 +39,15 @@ spec:
     stages {
         stage('Maven build') {
           steps {
-            sh 'mvn -v'
-            sh 'mvn clean package'
+            sh '/usr/bin/mvn -v'
+            sh '/usr/bin/mvn clean package'
           }
         }
 
         // Run Maven unit tests
         stage('Unit Test'){
           steps {
-            sh "mvn -B test"
+            sh "/usr/bin/mvn -B test"
           }
         }
     
@@ -211,7 +211,7 @@ spec:
 
                         withCredentials([usernamePassword(credentialsId: "${env.EXTERNAL_IMAGE_REPO_CREDENTIALS}", passwordVariable: 'AFpasswd', usernameVariable: 'AFuser')]) {
                               sh """
-                              skopeo copy \
+                              /usr/bin/skopeo copy \
                               --src-creds openshift:${openshift_token} \
                               --src-tls-verify=false \
                               --dest-creds ${AFuser}:${AFpasswd} \
