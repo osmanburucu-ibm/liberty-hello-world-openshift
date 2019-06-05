@@ -21,6 +21,7 @@ openshift.withCluster() {
 pipeline {
     agent {
       kubernetes {
+        cloud 'openshift'
         label 'maven'
         yaml """
 apiVersion: v1
@@ -182,6 +183,7 @@ spec:
         stage ('Push Container Image') {
           agent {
             kubernetes {
+              cloud 'openshift'
               label 'skopeo'
               yaml """
 apiVersion: v1
