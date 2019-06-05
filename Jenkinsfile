@@ -22,7 +22,6 @@ pipeline {
     agent {
       kubernetes {
         cloud 'openshift'
-        label 'maven'
         yaml """
 apiVersion: v1
 kind: Pod
@@ -31,10 +30,6 @@ spec:
   - name: jnlp
     image: openshift/jenkins-agent-maven-35-centos7:v3.11
     tty: true
-    command: 
-    - /usr/bin/dumb-init
-    - --
-    - /usr/local/bin/run-jnlp-client
   serviceAccountName: jenkins
 """
       }
@@ -42,8 +37,8 @@ spec:
     stages {
         stage('Maven build') {
           steps {
-            sh '/opt/rh/rh-maven35/root/usr/bin/mvn -v'
-            sh '/opt/rh/rh-maven35/root/usr/bin/mvn clean package'
+            sh 'mvn -v'
+            sh 'mvn clean package'
           }
         }
 
@@ -188,7 +183,6 @@ spec:
           agent {
             kubernetes {
               cloud 'openshift'
-              label 'skopeo'
               yaml """
 apiVersion: v1
 kind: Pod
