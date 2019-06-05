@@ -30,6 +30,7 @@ spec:
   containers:
   - name: jnlp
     image: registry.redhat.io/openshift3/jenkins-agent-maven-35-rhel7:v3.11
+    tty: true
   serviceAccountName: jenkins
 """
       }
@@ -192,6 +193,7 @@ spec:
   containers:
   - name: jnlp
     image: jkwong/skopeo-jenkins 
+    tty: true
   serviceAccountName: jenkins
 """
             }
