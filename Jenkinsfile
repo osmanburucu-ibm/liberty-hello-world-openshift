@@ -38,7 +38,6 @@ spec:
     stages {
         stage('Maven build') {
           steps {
-            sh 'which mvn'
             sh '/opt/rh/rh-maven35/root/usr/bin/mvn -v'
             sh '/opt/rh/rh-maven35/root/usr/bin/mvn clean package'
           }
