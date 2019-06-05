@@ -20,22 +20,34 @@ openshift.withCluster() {
 
 pipeline {
     agent {
-      label 'maven'
+      kubernetes {
+        cloud 'openshift'
+        label 'maven'
+        yaml """
+apiVersion: v1
+kind: Pod
+spec:
+  containers:
+  - name: jnlp
+    image: registry.redhat.io/openshift3/jenkins-agent-maven-35-rhel7:v3.11
+    tty: true
+  serviceAccountName: jenkins
+"""
+      }
     }
-
     stages {
         stage('Maven build') {
           steps {
             sh 'which mvn'
-            sh 'mvn -v'
-            sh 'mvn clean package'
+            sh '/opt/rh/rh-maven35/root/usr/bin/mvn -v'
+            sh '/opt/rh/rh-maven35/root/usr/bin/mvn clean package'
           }
         }
 
         // Run Maven unit tests
         stage('Unit Test'){
           steps {
-            sh "mvn -B test"
+            sh "/opt/rh/rh-maven35/root/usr/bin/mvn -B test"
           }
         }
     
@@ -171,7 +183,20 @@ pipeline {
 
         stage ('Push Container Image') {
           agent {
-            label 'skopeo'
+            kubernetes {
+              cloud 'openshift'
+              label 'skopeo'
+              yaml """
+apiVersion: v1
+kind: Pod
+spec:
+  containers:
+  - name: jnlp
+    image: jkwong/skopeo-jenkins 
+    tty: true
+  serviceAccountName: jenkins
+"""
+            }
           }
 
           steps {  
@@ -186,7 +211,8 @@ pipeline {
 
                         withCredentials([usernamePassword(credentialsId: "${env.EXTERNAL_IMAGE_REPO_CREDENTIALS}", passwordVariable: 'AFpasswd', usernameVariable: 'AFuser')]) {
                               sh """
-                              skopeo copy \
+                              which skopeo
+                              /usr/bin/skopeo copy \
                               --src-creds openshift:${openshift_token} \
                               --src-tls-verify=false \
                               --dest-creds ${AFuser}:${AFpasswd} \
