@@ -26,15 +26,16 @@ pipeline {
     stages {
         stage('Maven build') {
           steps {
-            sh '/usr/bin/mvn -v'
-            sh '/usr/bin/mvn clean package'
+            sh 'which mvn'
+            sh 'mvn -v'
+            sh 'mvn clean package'
           }
         }
 
         // Run Maven unit tests
         stage('Unit Test'){
           steps {
-            sh "/usr/bin/mvn -B test"
+            sh "mvn -B test"
           }
         }
     
@@ -170,20 +171,7 @@ pipeline {
 
         stage ('Push Container Image') {
           agent {
-            kubernetes {
-              cloud 'openshift'
-              label 'skopeo'
-              yaml """
-apiVersion: v1
-kind: Pod
-spec:
-  containers:
-  - name: jnlp
-    image: jkwong/skopeo-jenkins 
-    tty: true
-  serviceAccountName: jenkins
-"""
-            }
+            label 'skopeo'
           }
 
           steps {  
@@ -198,7 +186,7 @@ spec:
 
                         withCredentials([usernamePassword(credentialsId: "${env.EXTERNAL_IMAGE_REPO_CREDENTIALS}", passwordVariable: 'AFpasswd', usernameVariable: 'AFuser')]) {
                               sh """
-                              /usr/bin/skopeo copy \
+                              skopeo copy \
                               --src-creds openshift:${openshift_token} \
                               --src-tls-verify=false \
                               --dest-creds ${AFuser}:${AFpasswd} \
