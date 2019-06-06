@@ -111,13 +111,15 @@ pipeline {
                             "noCache": true,
                             "forcePull": true
                           ]
-                        ]
+                        ],
+                        "failedBuildsHistoryLimit": 3,
+                        "successfulBuildsHistoryLimit": 3
                       ]
                     ]
                     openshift.apply(buildconfig)
 
                     // run the build and wait for completion
-                    def build = openshift.selector("bc", env.APP_NAME).startBuild("--from-dir=.", "--wait")
+                    def build = openshift.selector("bc", env.APP_NAME).startBuild("--from-dir=.")
                     
                     // print the build logs
                     build.logs('-f')
@@ -143,7 +145,7 @@ pipeline {
           steps {  
             script {
               def tmpImg  = OUTPUT_IMAGE.indexOf("/")
-              def extImage = env.REGISTRY_ROUTE + "/" + OUTPUT_IMAGE.substring(tmpImg, OUTPUT_IMAGE.length())
+              def extImage = env.REGISTRY_ROUTE + "/" + OUTPUT_IMAGE.substring(tmpImg + 1, OUTPUT_IMAGE.length())
               println "image to scan: ${extImage}"
               writeFile file: 'anchore_images', text: extImage
               anchore 'anchore_images'
