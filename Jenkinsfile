@@ -143,7 +143,7 @@ pipeline {
           steps {  
             script {
               def tmpImg  = OUTPUT_IMAGE.indexOf("/")
-              def extImage = env.REGISTRY_ROUTE + "/" + OUTPUT_IMAGE.substring(tmpImg, OUTPUT_IMAGE.length)
+              def extImage = env.REGISTRY_ROUTE + "/" + OUTPUT_IMAGE.substring(tmpImg, OUTPUT_IMAGE.length())
               println "image to scan: ${extImage}"
               writeFile file: 'anchore_images', text: extImage
               anchore 'anchore_images'
