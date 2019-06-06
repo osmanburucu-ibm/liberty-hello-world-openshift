@@ -95,7 +95,7 @@ pipeline {
                         "output": [
                           "to": [
                             "kind": "ImageStreamTag",
-                            "name": "${env.APP_NAME}:latest"
+                            "name": "${env.APP_NAME}:${env.BUILD_NUMBER}"
                           ]
                         ],
                         "source": [
@@ -126,12 +126,13 @@ pipeline {
 
                     // set a global variable for the image digest
                     def buildObj = build.object()
-                    def tmpImg = buildObj.status.outputDockerImageReference
-                    def imageDigest = buildObj.status.output.to.imageDigest
-                    def imgRepoIdx = tmpImg.lastIndexOf(":")
-                    println imgRepoIdx
-
-                    OUTPUT_IMAGE = tmpImg.substring(0, imgRepoIdx) + "@" + imageDigest
+                    def imageRef = buildObj.status.outputDockerImageReference
+                    //def imageDigest = buildObj.status.output.to.imageDigest
+                    //def imgRepoIdx = tmpImg.lastIndexOf(":")
+                    //println imgRepoIdx
+                    def tmpImg  = imageRef.indexOf("/")
+                    OUTPUT_IMAGE = env.REGISTRY_ROUTE + "/" + tmpImg.substring(tmpImg + 1, tmpImg.length())
+                    OUTPUT_IMAGE_DIGEST = tmpImg.substring(0, imgRepoIdx) + "@" + imageDigest
 
                     println OUTPUT_IMAGE
 
