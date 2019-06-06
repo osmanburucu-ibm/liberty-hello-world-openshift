@@ -94,6 +94,10 @@ objects:
               mountPath: /config/configDropins/overrides/override-server.xml
               subPath: override-server.xml
               readOnly: true
+            - name: env-overrides
+              mountPath: /config/configDropins/overrides/override-env-server.xml
+              subPath: override-env-server.xml
+              readOnly: true
         dnsPolicy: ClusterFirst
         restartPolicy: Always
         schedulerName: default-scheduler
@@ -110,6 +114,10 @@ objects:
         - name: liberty-overrides
           configMap:
             name: liberty-overrides
+        - name: env-overrides
+          configMap:
+            name: env-overrides
+
     test: false
     triggers:
     - type: ConfigChange

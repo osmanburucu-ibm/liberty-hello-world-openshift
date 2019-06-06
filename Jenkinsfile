@@ -9,7 +9,7 @@ openshift.withCluster() {
   echo "Starting Pipeline for ${APP_NAME}..."
   env.BUILD = "${env.NAMESPACE}"
   env.DEPLOY_REPO_URL = "git@github.com:jkwong888/liberty-hello-world-openshift-deploy.git"
-  env.DEPLOY_REPO_BRANCH = "master"
+  env.DEPLOY_REPO_BRANCH = "dev"
   env.DEPLOY_REPO_CREDS = "github-deploy-key"
 
   env.EXTERNAL_IMAGE_REPO_URL = "harbor.jkwong.cloudns.cx"
