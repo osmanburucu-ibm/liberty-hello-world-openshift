@@ -127,11 +127,12 @@ pipeline {
                     // set a global variable for the image digest
                     def buildObj = build.object()
                     def imageRef = buildObj.status.outputDockerImageReference
-                    def imageDigest = buildObj.status.output.to.imageDigest
-                    def imgRepoIdx = tmpImg.lastIndexOf(":")
                     def tmpImg  = imageRef.indexOf("/")
                     OUTPUT_IMAGE = env.REGISTRY_ROUTE + "/" + imageRef.substring(tmpImg + 1, imageRef.length())
-                    OUTPUT_IMAGE_DIGEST = imageRef.substring(0, imgRepoIdx) + "@" + imageDigest
+
+                    def imageDigest = buildObj.status.output.to.imageDigest
+                    def imgRepoIdx = imageRef.lastIndexOf(":")
+                    OUTPUT_IMAGE_DIGEST = env.REGISTRY_ROUTE + "/" + imageRef.substring(tmpImg + 1, imgRepoIdx) + "@" + imageDigest
 
                     println OUTPUT_IMAGE
 
