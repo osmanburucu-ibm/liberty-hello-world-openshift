@@ -136,34 +136,8 @@ pipeline {
         }
         stage ('Scan Container Image') {
           steps {  
-            script {
-              println "scan container image"
-        /*
-              def image_digest_arr = IMAGE_DIGEST.split(":")
-              def registry = "${env.AQUA_REGISTRY}"
-
-              def scanConfig = [
-                registryName: registry,
-                workspaceName:"${env.NAMESPACE}",
-                imageName: "${env.APP_NAME}@" + image_digest_arr[0],
-                imageTag: image_digest_arr[1],
-                credentials:"${env.AQUA_CREDENTIALS}"
-              ]
-
-              try {
-                startImageScan(scanConfig)
-                timeout(20) {
-                  waitUntil{
-                    getImageScanStatus(scanConfig)    
-                  }
-                }
-                getImageScanResults(scanConfig) 
-              } catch (err) {
-                println "WARNING aqua scan failed! ${err}"
-                currentBuild.result = 'UNSTABLE'
-              }
-              */
-            }
+            writeFile file: 'anchore_images', text: ${OUTPUT_IMAGE}
+            anchore 'anchore_images'
           }
         }
 
