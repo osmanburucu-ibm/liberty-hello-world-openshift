@@ -7,11 +7,14 @@ openshift.withCluster() {
   env.NAMESPACE = openshift.project()
   env.APP_NAME = "${JOB_NAME}".replaceAll(/-build.*/, '')
   echo "Starting Pipeline for ${APP_NAME}..."
+
   env.BUILD = "${env.NAMESPACE}"
   env.DEPLOY_REPO_URL = "git@github.com:jkwong888/liberty-hello-world-openshift-deploy.git"
   env.DEPLOY_REPO_BRANCH = "dev"
   env.DEPLOY_REPO_CREDS = "github-deploy-key"
 
+  env.REGISTRY_ROUTE = "registry.app-ocp-prod.ibm-gse.jkwong.xyz"
+ 
   env.EXTERNAL_IMAGE_REPO_URL = "harbor.jkwong.cloudns.cx"
   env.EXTERNAL_IMAGE_REPO_NAMESPACE = "jkwong-pub"
   env.EXTERNAL_IMAGE_REPO_CREDENTIALS = "harbor"
@@ -136,8 +139,13 @@ pipeline {
         }
         stage ('Scan Container Image') {
           steps {  
-            writeFile file: 'anchore_images', text: OUTPUT_IMAGE
-            anchore 'anchore_images'
+            script {
+              def tmpImg  = OUTPUT_IMAGE.indexOf("/")
+              def extImage = env.REGISTRY_ROUTE + "/" + OUTPUT_IMAGE.substring(tmpImg, OUTPUT_IMAGE.length)
+              println "image to scan: ${extImage}"
+              writeFile file: 'anchore_images', text: extImage
+              anchore 'anchore_images'
+            }
           }
         }
 
