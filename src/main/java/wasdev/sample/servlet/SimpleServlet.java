@@ -39,11 +39,11 @@ public class SimpleServlet extends HttpServlet {
 
         try {
             jndiConstant = new InitialContext().lookup("env");
-            environment += (String) jndiConstant;
+            environment = (String) jndiConstant;
         } catch (Exception e) {
             e.printStackTrace();
         }
 
-        response.getWriter().print("Hello " + username + ", you're viewing the application in " + environment + "!");
+        response.getWriter().print("Hello " + username + ", you're viewing the application in " + environment + " environment!");
     }
 }

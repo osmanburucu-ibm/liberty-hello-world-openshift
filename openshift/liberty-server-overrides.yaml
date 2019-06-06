@@ -7,5 +7,5 @@ metadata:
 data:
   override-server.xml: |-
     <server>
-        <jndiEntry jndiName="username" value="User" />
+        <jndiEntry jndiName="username" value="user" />
     </server>
