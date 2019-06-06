@@ -9,6 +9,10 @@ openshift.withCluster() {
   echo "Starting Pipeline for ${APP_NAME}..."
 
   env.BUILD = "${env.NAMESPACE}"
+
+  env.BASE_IMAGE_REPO = "ibmcom/websphere-liberty"
+  env.BASE_IMAGE_TAG = "kernel-ubi-min"
+
   env.DEPLOY_REPO_URL = "git@github.com:jkwong888/liberty-hello-world-openshift-deploy.git"
   env.DEPLOY_REPO_BRANCH = "dev"
   env.DEPLOY_REPO_CREDS = "github-deploy-key"
@@ -64,7 +68,7 @@ pipeline {
                             "name": "kernel-ubi-min",
                             "from": [
                               "kind": "DockerImage",
-                              "name": "ibmcom/websphere-liberty:kernel-ubi-min"
+                              "name": "${env.BASE_IMAGE_REPO}:${env.BASE_IMAGE_TAG}"
                             ]
                           ]
                         ]
@@ -86,7 +90,6 @@ pipeline {
                       "kind": "BuildConfig",
                       "metadata": [
                         "name": "${env.APP_NAME}",
-                        "namespace": "${env.NAMESPACE}"
                       ],
                       "spec": [
                         "output": [
@@ -102,8 +105,7 @@ pipeline {
                           "dockerStrategy": [
                             "from": [
                               "kind": "ImageStreamTag",
-                              "namespace": "${env.NAMESPACE}",
-                              "name": "liberty-base:kernel-rhel"
+                              "name": "liberty-base:kernel-ubi-min"
                             ],
                             "dockerfilePath": "Dockerfile",
                             "noCache": true,
