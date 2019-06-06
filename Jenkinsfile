@@ -136,7 +136,7 @@ pipeline {
         }
         stage ('Scan Container Image') {
           steps {  
-            writeFile file: 'anchore_images', text: ${OUTPUT_IMAGE}
+            writeFile file: 'anchore_images', text: OUTPUT_IMAGE
             anchore 'anchore_images'
           }
         }
