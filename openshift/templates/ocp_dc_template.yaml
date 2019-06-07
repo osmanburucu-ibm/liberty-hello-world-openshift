@@ -98,15 +98,15 @@ objects:
               mountPath: /config/configDropins/overrides/override-env-server.xml
               subPath: override-env-server.xml
               readOnly: true
+            securityContext: 
+              privileged: false
+              allowPrivilegeEscalation: false
+              capabilities:
+                drop:
+                - ALL
         dnsPolicy: ClusterFirst
         restartPolicy: Always
         schedulerName: default-scheduler
-        securityContext: 
-          privileged: false
-          allowPrivilegeEscalation: false
-          capabilities:
-            drop:
-            - ALL
         terminationGracePeriodSeconds: 30
         volumes:
         - emptyDir: {}
