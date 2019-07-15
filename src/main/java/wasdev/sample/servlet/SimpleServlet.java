@@ -45,6 +45,6 @@ public class SimpleServlet extends HttpServlet {
         }
 
         //response.getWriter().print("Hello " + username + ", you're viewing the application in " + environment + " environment!");
-        response.getWriter().print("Hello Gang ", you're viewing the application in " + environment + " environment!");
+        response.getWriter().print("Hello World, you're viewing the application in " + environment + " environment!");
     }
 }
