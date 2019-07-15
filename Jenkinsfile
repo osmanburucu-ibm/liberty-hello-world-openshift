@@ -18,7 +18,7 @@ openshift.withCluster() {
   env.DEPLOY_REPO_CREDS = "github-deploy-key"
 
   env.REGISTRY_ROUTE = "registry.app-ocp-prod.ibm-gse.jkwong.xyz"
- 
+
   env.EXTERNAL_IMAGE_REPO_URL = "harbor.jkwong.cloudns.cx"
   env.EXTERNAL_IMAGE_REPO_NAMESPACE = "jkwong-pub"
   env.EXTERNAL_IMAGE_REPO_CREDENTIALS = "harbor"
@@ -43,7 +43,7 @@ pipeline {
             sh "/opt/rh/rh-maven35/root/usr/bin/mvn -B test"
           }
         }
-    
+
         // Build Container Image using the artifacts produced in previous stages
         stage('Build Container Image'){
           steps {
@@ -120,7 +120,7 @@ pipeline {
 
                     // run the build and wait for completion
                     def build = openshift.selector("bc", env.APP_NAME).startBuild("--from-dir=.")
-                    
+
                     // print the build logs
                     build.logs('-f')
 
@@ -137,22 +137,23 @@ pipeline {
                     println OUTPUT_IMAGE
 
                   }
-                }        
+                }
               }
             }
           }
         }
-        stage ('Scan Container Image') {
-          steps {  
-            script {
-              def tmpImg  = OUTPUT_IMAGE.indexOf("/")
-              def extImage = env.REGISTRY_ROUTE + "/" + OUTPUT_IMAGE.substring(tmpImg + 1, OUTPUT_IMAGE.length())
-              println "image to scan: ${extImage}"
-              writeFile file: 'anchore_images', text: extImage
-              anchore 'anchore_images'
-            }
-          }
-        }
+//        stage ('Scan Container Image') {
+//          steps {
+//            script {
+//              def tmpImg  = OUTPUT_IMAGE.indexOf("/")
+//              def extImage = env.REGISTRY_ROUTE + "/" + OUTPUT_IMAGE.substring(tmpImg + 1, OUTPUT_IMAGE.length())
+//              println "image to scan: ${extImage}"
+//              writeFile file: 'anchore_images', text: extImage
+//              anchore 'anchore_images'
+//            }
+//          }
+//        }
+
 
         stage ('Push Container Image') {
           agent {
@@ -165,15 +166,15 @@ kind: Pod
 spec:
   containers:
   - name: jnlp
-    image: jkwong/skopeo-jenkins 
+    image: jkwong/skopeo-jenkins
     tty: true
   serviceAccountName: jenkins
 """
             }
           }
 
-          steps {  
-              script {                    
+          steps {
+              script {
                   def srcImage = OUTPUT_IMAGE
 
                   openshift.withCluster() {
@@ -213,15 +214,15 @@ spec:
 
               #cp -v openshift/*.{yaml,yml,json} ocp_deploy_assets/ || true
               """
-              
+
               // render any deploy templates now and output them to the output directory
-              openshift.withCluster() {                    
+              openshift.withCluster() {
                 openshift.withProject() {
                   files = findFiles(glob: 'openshift/templates/*.*')
 
                   for (File f : files) {
                     def objects = openshift.process(
-                      "-f", "${f.path}", 
+                      "-f", "${f.path}",
                       "-p", "APP_NAME=${env.APP_NAME}",
                       "-p", "IMAGE=${env.DST_IMAGE}",
                       "--ignore-unknown-parameters")
@@ -248,14 +249,14 @@ spec:
             }
 
             /**
-             * Checkin deploy configs to GitHub repo? 
+             * Checkin deploy configs to GitHub repo?
              * Process:
              * 1. clone DevOps configs repo to a folder (devops_configs_src)
-             * 2. cd in to DevOPs configs repo dir 
-             * cp generated ocp compiled template configs to the repo dir 
+             * 2. cd in to DevOPs configs repo dir
+             * cp generated ocp compiled template configs to the repo dir
              * 3. Check in to git: Do a git wizardry -> config, pull latest, commit, push
              **/
-             
+
           }
         }
 
@@ -271,7 +272,7 @@ spec:
 
               sh "find ."
 
-              withCredentials([sshUserPrivateKey(credentialsId: "${env.DEPLOY_REPO_CREDS}", 
+              withCredentials([sshUserPrivateKey(credentialsId: "${env.DEPLOY_REPO_CREDS}",
                                                  keyFileVariable: 'SSH_KEY')]) {
                 sh """
                 cp ../ocp_deploy_assets/* .
