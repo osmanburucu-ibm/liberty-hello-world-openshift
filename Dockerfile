@@ -3,7 +3,7 @@ FROM ibmcom/websphere-liberty:kernel-ubi-min
 
 USER root
 
-RUN microdnf update -y
+# RUN microdnf update -y
 
 # Add my app and config
 COPY ./target/JavaHelloWorldApp.war /config/apps/
