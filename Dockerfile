@@ -3,7 +3,8 @@ FROM ibmcom/websphere-liberty:kernel-ubi-min
 
 USER root
 
-RUN microdnf update -y
+#changed 2020.12.07 as microdnf couldn't be found to dnf
+#RUN dnf update -y
 
 # Add my app and config
 COPY ./target/JavaHelloWorldApp.war /config/apps/
