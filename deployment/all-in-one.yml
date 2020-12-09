@@ -16,7 +16,7 @@ spec:
       spec:
         containers:
         - name: hellowltp
-          image:  quay.io/osmanburucuibm/demowltp:@version@
+          image:  quay.io/osmanburucuibm/demowltp:@version.name@
           imagePullPolicy: IfNotPresent
           ports:
           - containerPort: 9080
