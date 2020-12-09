@@ -1,0 +1,23 @@
+#!/bin/bash
+echo "Liberty Hello World to OpenShift using UrbanCode Deploy"
+
+BUILD_VERSION=0.0.0
+
+echo "Parameters are:"
+while true; do
+    case $1 in 
+        -v | --version )
+            BUILD_VERSION=$2; echo "Version for new build=$BUILD_VERSION"; shift 2 ;;
+        -- ) echo "-- $1"; shift; break ;;
+        * ) break ;;
+    esac
+done
+
+# first step build with maven
+mvn clean install
+
+# second step build container image, need input variable for version
+docker build . -t demowltp:"${BUILD_VERSION}"
+docker tag demowltp:"${BUILD_VERSION}" quay.io/osmanburucuibm/demowltp:"${BUILD_VERSION}"
+
+docker push quay.io/osmanburucuibm/demowltp:"${BUILD_VERSION}"
