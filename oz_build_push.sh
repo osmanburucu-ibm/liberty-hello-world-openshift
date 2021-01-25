@@ -13,6 +13,12 @@ while true; do
     esac
 done
 
+if [[ "$BUILD_VERSION" == "0.0.0" ]]; 
+then 
+    echo "Please enter new Version with -v parameter"
+    exit 1 
+fi 
+
 # first step build with maven
 mvn clean install
 
