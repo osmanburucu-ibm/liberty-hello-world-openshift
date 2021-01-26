@@ -1,6 +1,6 @@
 #FROM harbor.jkwong.cloudns.cx/ibmcom/websphere-liberty:javaee8-rhel
-# FROM ibmcom/websphere-liberty:kernel-ubi-min
-FROM ibmcom/websphere-liberty:19.0.0.9-kernel-ubi-min
+FROM ibmcom/websphere-liberty:kernel-ubi-min
+#FROM ibmcom/websphere-liberty:19.0.0.9-kernel-ubi-min
 
 USER root
 
