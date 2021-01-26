@@ -1,7 +1,7 @@
 #FROM harbor.jkwong.cloudns.cx/ibmcom/websphere-liberty:javaee8-rhel
 FROM ibmcom/websphere-liberty:kernel-ubi-min
 
-# USER root
+USER root
 
 #changed 2020.12.07 as microdnf couldn't be found to dnf
 #RUN dnf update -y
