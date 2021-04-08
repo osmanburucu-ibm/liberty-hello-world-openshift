@@ -42,6 +42,16 @@ spec:
               secretKeyRef:
                 name: hellowltp-secret-env
                 key: ENV_TOY_SECRET
+          - name: USERNAME
+            valueFrom:
+              configMapKeyRef:
+                name: liberty-env-properties
+                key: username
+          - name: ENV
+            valueFrom:
+              configMapKeyRef:
+                name: liberty-env-properties
+                key: env                 
         volumes:
         - name: configvol
           configMap:
