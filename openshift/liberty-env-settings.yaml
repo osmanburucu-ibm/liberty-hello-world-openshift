@@ -5,4 +5,4 @@ metadata:
   namespace: @oc-project@
 data:
   username: @user.name@
-  env: @environment.name@
+  env: @name@
