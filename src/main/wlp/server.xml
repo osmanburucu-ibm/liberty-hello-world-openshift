@@ -13,8 +13,8 @@
         <tcpOptions soReuseAddr="true"/>
     </httpEndpoint>
     
-    <jndiEntry jndiName="username" value="userabcdef" />
-    <jndiEntry jndiName="env" value="docker" />
+    <jndiEntry jndiName="username" value="${env.username}" />
+    <jndiEntry jndiName="env" value="${env.env}" />
 
     <application name="JavaHelloWorldApp" context-root="/" location="JavaHelloWorldApp.war" type="war"/>
 
