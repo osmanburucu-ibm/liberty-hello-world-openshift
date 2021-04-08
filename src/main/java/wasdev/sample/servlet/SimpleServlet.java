@@ -31,14 +31,14 @@ public class SimpleServlet extends HttpServlet {
         Object jndiConstant;
 
         try {
-            jndiConstant = new InitialContext().lookup("username");
+            jndiConstant = new InitialContext().lookup("USERNAME");
             username = (String) jndiConstant;
         } catch (Exception e) {
             e.printStackTrace();
         }
 
         try {
-            jndiConstant = new InitialContext().lookup("env");
+            jndiConstant = new InitialContext().lookup("ENV");
             environment = (String) jndiConstant;
         } catch (Exception e) {
             e.printStackTrace();
