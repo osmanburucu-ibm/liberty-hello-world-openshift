@@ -20,7 +20,7 @@ then
 fi 
 
 # first step build with maven
-mvn clean install
+# mvn clean install
 
 # second step build container image, need input variable for version
 docker build . -t demowltp:"${BUILD_VERSION}"
