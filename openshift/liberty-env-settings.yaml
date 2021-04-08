@@ -1,0 +1,8 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: liberty-env-properties
+  namespace: @oc-project@
+data:
+  username: @user.name@
+  env: @environment.name@
