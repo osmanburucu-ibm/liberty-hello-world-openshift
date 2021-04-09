@@ -24,6 +24,7 @@ fi
 
 # second step build container image, need input variable for version
 docker build . -t demowltp:"${BUILD_VERSION}"
+# TODO: first check/test that this version works, then use gh/gitlab cli to create new release on repo, push new version to ucd component!
 docker tag demowltp:"${BUILD_VERSION}" quay.io/osmanburucuibm/demowltp:"${BUILD_VERSION}"
 
 docker push quay.io/osmanburucuibm/demowltp:"${BUILD_VERSION}"
